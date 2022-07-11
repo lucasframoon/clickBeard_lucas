@@ -61,7 +61,7 @@ class UserDAO extends BaseDAO
 									 ds_email = :ds_email, 
 									 ds_login = :ds_login, 
 									 tp_user = :tp_user
-										 WHERE id_user = ?',
+										 WHERE id_user = :id_user',
 			array(
 				':nm_user' => $user->getNmUser(),
 				':ds_email' => $user->getDsEmail(),

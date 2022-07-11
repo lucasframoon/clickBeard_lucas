@@ -59,7 +59,7 @@ class SpecialtyDAO extends BaseDAO
 		parent::updateItem(
 			'UPDATE specialty SET 
 									 nm_specialty = :nm_specialty
-										 WHERE id_specialty = ?',
+										 WHERE id_specialty = :id_specialty',
 			array(
 				':nm_specialty' => $specialty->getNmSpecialty(),
 				':id_specialty' => $specialty->getIdSpecialty()

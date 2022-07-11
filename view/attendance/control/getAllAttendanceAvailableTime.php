@@ -1,7 +1,5 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+
 include_once(filter_input(INPUT_SERVER, 'DOCUMENT_ROOT') . '/dao/AttendanceDAO.php');
 
 header("Content-Type: application/json");
@@ -39,11 +37,11 @@ $listTimes = [
 
 try {
 
-    $result = (new AttendanceDAO())->getAllAttendanceAvailableTime($dtAttendance, $idBarber);
+    $result = (new AttendanceDAO())->getAllAttendanceNotAvailableTime($dtAttendance, $idBarber);
 
     foreach ($result as $key => $notAvaliableTime) {
         $notAvaliableTimeSplit = explode(' ', $notAvaliableTime->getDtAttendance());
-        $notAvaliableTimes = $notAvaliableTimeSplit[1]; //'08:00:00'
+        array_push($notAvaliableTimes, $notAvaliableTimeSplit[1]); //'08:00:00'
     }
 
     $avaliableTimes = array_diff($listTimes, $notAvaliableTimes);

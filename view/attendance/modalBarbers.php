@@ -57,9 +57,9 @@
                 contentType: false,
                 processData: false,
                 success: function(response) {
-                    // console.log(result);
-                    // return resolve(result);
                     createNewItemBarbers(response.RESULT);
+                    // return resolve(response.STATUS)
+
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
                     return reject(errorThrown);

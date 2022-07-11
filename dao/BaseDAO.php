@@ -161,7 +161,6 @@ class BaseDAO
             $stmt = $this->connection->prepare($query);
 
             foreach (array_keys($param) as $id) {
-                // echo '<br>' . $id . ' - ' . $param[$id] . '</br>';
                 $stmt->bindParam($id, $param[$id]);
             }
 

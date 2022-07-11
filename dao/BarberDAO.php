@@ -27,7 +27,7 @@ class BarberDAO extends BaseDAO
 
 	public function getBarber($idBarber)
 	{
-		return parent::getItemCastParam('SELECT * FROM barber WHERE id_barber = :id_barber ORDER_BY nm_barber', array(':id_barber' => $idBarber));
+		return parent::getItemCastParam('SELECT * FROM barber WHERE id_barber = :id_barber ', array(':id_barber' => $idBarber));
 	}
 
 	public function getBarbersByWhere($where)
@@ -67,7 +67,7 @@ class BarberDAO extends BaseDAO
 									 nm_barber = :nm_barber, 
 									 dt_birthday = :dt_birthday, 
 									 dt_contract = :dt_contract
-										 WHERE id_barber = ?',
+										 WHERE id_barber = :id_barber',
 			array(
 				':nm_barber' => $barber->getNmBarber(),
 				':dt_birthday' => $barber->getDtBirthday(),
