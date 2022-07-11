@@ -10,7 +10,7 @@ Renomear a pasta 'clickBeard_lucas' para 'public'
 
 Abrir no editor
 
-docker-compose up (iá baixar e montar as imagens necessárias)
+executar o comando: docker-compose up (iá baixar e montar as imagens necessárias)
 
 Após finalizar, você deve conseguir acessar: localhost:45000
   
