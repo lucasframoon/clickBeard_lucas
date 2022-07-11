@@ -11,23 +11,21 @@
             <input name="dtAttendance" id="dtAttendance" type="text" placeholder="DD/MM/YYYY" onchange="console.log('testeee')">
         </div>
 
-        <div class="ui form" style="margin-top: 1rem;">
+        <div class="ui two column grid">
+            <div class="column">
+                <div class="ui form" style="padding-top: 0px">
+                    <div class="grouped fields" id="columnLeft">
 
-            <!-- <label>Horários disponíveis: </label> -->
-            <div class="ui two column grid">
-                <div class="column">
-                    <div class="grouped fields" id="columnLeft" style="padding-top: 0px">
-                        <div></div>
-                    </div>
-                </div>
-
-                <div class="column">
-                    <div class="grouped fields" id="columnRight" style="padding-top: 0px">
-                        <div></div>
                     </div>
                 </div>
             </div>
 
+            <div class="column">
+                <div class="ui form" style="padding-top: 0px">
+                    <div class="grouped fields" id="columnRight">
+                    </div>
+                </div>
+            </div>
         </div>
 
     </div>
@@ -36,7 +34,7 @@
         <div class="ui black deny button" id="btnReturnToBarbers" onclick="returnToBarbers()">
             Voltar
         </div>
-        <div class="ui positive right labeled icon button" onclick="saveAttendance()">
+        <div class="ui positive right labeled icon button" id="btnInsertAttendance" hourAttendance=" " onclick="insertAttendance()">
             Salvar
             <i class="checkmark icon"></i>
         </div>
@@ -138,6 +136,7 @@
                 processData: false,
                 success: function(response) {
                     createRadioAvaliableTime(response.RESULT);
+                    // return resolve(response.STATUS)
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
                     return reject(errorThrown);
@@ -152,18 +151,17 @@
      * 
      */
     function createRadioAvaliableTime(times = []) {
+        times = Object.values(times)
 
         let radioLeft = '';
         let radioRight = '';
-        half = Math.round(times.length / 2); //metade do array para dividir na tela 
+        half = Math.round(times.length / 2); //Dividindo para não scrolar
         times.forEach(time => {
-
             if (times.indexOf(time) < half) {
-
                 radioLeft +=
                     `<div class="field">
                         <div class="ui radio checkbox">
-                            <input type="radio" name=${time} value=${time} onclick="console.log(this)">
+                            <input type="radio" name=${time} value=${time} onclick="reCheckRadios(this)">
                             <label>${time.substring(0,5)}</label>
                         </div>
                     </div>`;
@@ -171,7 +169,7 @@
                 radioRight +=
                     `<div class="field">
                         <div class="ui radio checkbox">
-                            <input type="radio" value=${time} onclick="console.log(this)">
+                            <input type="radio" value=${time} onclick="reCheckRadios(this)">
                             <label>${time.substring(0,5)}</label>
                         </div>
                     </div>`;
@@ -184,19 +182,25 @@
 
     }
 
-    function saveAttendance(rawDtAttendance = '', idBarber = '') {
+    function insertAttendance() {
 
-        if (rawDtAttendance == null || idBarber == null) {
+        idBarber = $('#modalBarbers .image img').attr('id')
+        // idSpecialty = $('#modalBarbers .image img').attr('idSpecialty')
+        rawDtAttendance = $('#dtAttendance').val();
+        hourAttendance = $('input[type=radio]:checked').val();
+
+        if (idBarber == null || rawDtAttendance == null || hourAttendance == null) {
             return false;
         }
 
         data = new FormData();
-        data.append('rawDtAttendance', rawDtAttendance);
         data.append('idBarber', idBarber);
+        data.append('rawDtAttendance', rawDtAttendance);
+        data.append('hourAttendance', hourAttendance);
 
         new Promise(function(resolve, reject) {
             $.ajax({
-                url: "./control/getAllAttendanceAvailableTime.php",
+                url: "./control/insertAttendance.php",
                 type: "POST",
                 data: data,
                 dataType: "json",
@@ -205,12 +209,25 @@
                 contentType: false,
                 processData: false,
                 success: function(response) {
-                    createRadioAvaliableTime(response.RESULT);
+
+                    if (response.STATUS == 'OK') {
+                        location.reload();
+                    } else {
+                        alert(response.STATUS);
+                    }
+                    // return resolve(response.STATUS)
+
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
                     return reject(errorThrown);
                 },
             });
         });
+    }
+
+    function reCheckRadios(element) {
+        $('input[type=radio]').prop('checked', false);
+        $(element).prop('checked', true);
+        $("#btnInsertAttendance").attr('hourAttendance', element.value);
     }
 </script>

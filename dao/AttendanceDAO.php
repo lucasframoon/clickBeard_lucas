@@ -13,25 +13,28 @@ class AttendanceDAO extends BaseDAO
 
 	public function getAttendances()
 	{
-		return parent::getListCast('SELECT * FROM attendance');
+		return parent::getListCast('SELECT * 
+									FROM attendance 
+									WHERE dt_attendance < SYSDATE() 
+									AND ck_active = 1');
 	}
 
 	public function getAttendance($idAttendance)
 	{
-		// select * from attendance a where dt_attendance BETWEEN '2022-07-10 08:00:00' AND '2022-07-10 17:00'
 		return parent::getItemCastParam('SELECT * FROM attendance WHERE id_attendance = :id_attendance ', array(':id_attendance' => $idAttendance));
 	}
 
-	public function getAllAttendanceAvailableTime($dtAttendance, $idBarber)
+	public function getAllAttendanceNotAvailableTime($dtAttendance, $idBarber)
 	{
 
 		$dtAttendanceInitial = $dtAttendance . " 08:00:00";
 		$dtAttendanceFinal = $dtAttendance . " 18:00:00";
 
-		return parent::getItemCastParam(
+		return parent::getListCastParam(
 			"SELECT * 
 			FROM attendance 
-			WHERE id_barber = :id_barber
+			WHERE ck_active = 1
+			AND id_barber = :id_barber
 			AND dt_attendance BETWEEN :dt_attendance_initial AND :dt_attendance_final ",
 			array(
 				':dt_attendance_initial' => $dtAttendanceInitial,
@@ -44,7 +47,9 @@ class AttendanceDAO extends BaseDAO
 
 	public function getAttendancesByWhere($where)
 	{
-		return parent::getListCast('SELECT * FROM attendance WHERE 1=1 $where');
+		return parent::getListCast("SELECT * 
+									FROM attendance 
+									WHERE dt_attendance < SYSDATE() $where");
 	}
 
 	public function insert(\Attendance $attendance)
@@ -52,11 +57,14 @@ class AttendanceDAO extends BaseDAO
 		$id = parent::insertItem(
 			'INSERT INTO attendance (
 										id_barber,
+										-- id_specialty,
 										dt_attendance
 											) VALUES (:id_barber,
+														-- :id_specialty,
 														:dt_attendance)',
 			array(
 				':id_barber' => $attendance->getIdBarber(),
+				// ':id_specialty' => $attendance->getIdSpecialty(),
 				':dt_attendance' => $attendance->getDtAttendance()
 			)
 		);
@@ -73,10 +81,12 @@ class AttendanceDAO extends BaseDAO
 		parent::updateItem(
 			'UPDATE attendance SET 
 									 id_barber = :id_barber, 
+									--  id_specialty = :id_specialty,
 									 dt_attendance = :dt_attendance
-										 WHERE id_attendance = ?',
+										 WHERE id_attendance = :id_attendance',
 			array(
 				':id_barber' => $attendance->getIdBarber(),
+				// ':id_specialty' => $attendance->getIdSpecialty(),
 				':dt_attendance' => $attendance->getDtAttendance(),
 				':id_attendance' => $attendance->getIdAttendance()
 			)

@@ -3,8 +3,21 @@
         margin-left: 10px;
     }
 
+    #listItemSpecialtys {
+        text-align: -webkit-center;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        align-items: stretch;
+    }
+
     .checkline {
         margin-left: 30%;
+        text-align: -webkit-center;
+    }
+
+    .label3 {
+        font-size: 2rem !important;
     }
 
     #card {
@@ -33,7 +46,6 @@
 </div>
 
 <script>
-
     function advanceToBarberSelection() {
         var idsSpecialtys = $("#modalSpecialtys input:checked").map(function() {
             return $(this).val();
@@ -45,8 +57,9 @@
     }
 
     function cancelAttendance() {
-        $('#modalSpecialtys').removeClass('visible');
-        $('#modalBarbers').removeClass('visible');
+        $('#modalSpecialtys').transition('fade down')
+        $('#modalBarbers').transition('fade down')
+        $('#modalAttendance').transition('fade down')
     }
 
     function getAllSpecialty() {
@@ -54,16 +67,16 @@
         new Promise(function(resolve, reject) {
             $.ajax({
                 url: "/assets/util/getAllSpecialtys.php",
-                type: "GET",
+                type: "POST",
                 dataType: "json",
                 async: true,
                 cache: false,
                 contentType: false,
                 processData: false,
                 success: function(response) {
-                    // console.log(result);
-                    // return resolve(result);
                     createNewItemSpecialtys(response.RESULT);
+                    // return resolve(response.STATUS)
+
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
                     return reject(errorThrown);
@@ -77,8 +90,8 @@
         var item =
             `<div class="checkLine">
                 <div class="ui checkbox">
-                    <input type="checkbox" value="">
-                    <label>Todas</label>
+                    <input type="checkbox" value="0" onclick="checkAllCheckbox(this)">
+                    <label class="label3">Todas</label>
                 </div>
                 <i class="fa-solid fa-scissors"></i>
             </div>`;
@@ -88,7 +101,7 @@
                 `<div class="checkLine">
                 <div class="ui checkbox">
                     <input type="checkbox" value="${specialty.idSpecialty}">
-                    <label>${specialty.nmSpecialty}</label>
+                    <label class="label3">${specialty.nmSpecialty}</label>
                 </div>
                 <i class="fa-solid fa-scissors"></i>
              </div>`
@@ -98,5 +111,8 @@
         listItemSpecialtys.innerHTML = item;
 
     }
-    
+
+    function checkAllCheckbox(element) {
+        $(element).prop('checked') ? $('#modalSpecialtys input').prop('checked', true) : $('#modalSpecialtys input').prop('checked', false);
+    }
 </script>
